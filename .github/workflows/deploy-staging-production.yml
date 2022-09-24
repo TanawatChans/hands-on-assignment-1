@@ -17,14 +17,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
       
-      - name: Get release tag
-        id: release_tag
-        run: |- 
-          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-          echo "Published tag is ${{ steps.release_tag.outputs.tag }}"
-      
-      # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
@@ -34,8 +28,8 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
       
-      # Get the GKE credentials for deploying to the cluster
-      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+      - name: Get the GKE credentials for deploying to the cluster
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
@@ -57,11 +51,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: tanawatchans/${{ env.DEPLOYMENT_NAME }}:{{ steps.release_tag.outputs.tag }}
+          tags: tanawatchans/${{ env.DEPLOYMENT_NAME }}:{{ github.ref_name }}
       
       # Staging deployment
       - name: Add image tag to staging helm value
-        run: yq -i '.deployment.image = "tanawatchans/${{ env.DEPLOYMENT_NAME }}:${{ steps.release_tag.outputs.tag }}"' helm-values/staging.yaml
+        run: yq -i '.deployment.image = "tanawatchans/${{ env.DEPLOYMENT_NAME }}:${{ github.ref_name }}"' helm-values/staging.yaml
 
       - name: Deploy to staging using helm
         run: |-
@@ -77,7 +71,7 @@ jobs:
 
       # Production deployment
       - name: Add image tag to production helm value
-        run: yq -i '.deployment.image = "tanawatchans/${{ env.DEPLOYMENT_NAME }}:${{ steps.release_tag.outputs.tag }}"' helm-values/production.yaml
+        run: yq -i '.deployment.image = "tanawatchans/${{ env.DEPLOYMENT_NAME }}:${{ github.ref_name }}"' helm-values/production.yaml
 
       - name: Deploy to production using helm
         run: |-
