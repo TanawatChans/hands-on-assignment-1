@@ -32,7 +32,7 @@ jobs:
       - uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: tanawatChans
+          approvers: TanawatChans
 
       - name: Deploy to production
         run: echo deploying
