@@ -1,0 +1,49 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.app_name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app_name }}
+spec:
+  ports:
+  - name: web
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+  selector:
+    app: {{ .Values.app_name }}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.app_name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app_name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app_name }}
+    spec:
+      containers:
+      - name: torchserve
+        image: {{ .Values.deployment.image }}
+        ports:
+        - name: web
+          containerPort: 8080
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: {{ .Values.deployment.cpu_limit }}
+            memory: {{ .Values.deployment.memory_limit }}
+          requests:
+            cpu: {{ .Values.deployment.cpu_request }}
+            memory: {{ .Values.deployment.memory_request }}
+        
