@@ -1,9 +1,9 @@
 name: Build and push docker image
 on:
   push:
-    branches: [ "docker-build" ]
+    branches: [ "development" ]
   pull_request:
-    branches: [ "docker-build" ]
+    branches: [ "development" ]
 jobs:
   push_to_registry:
     name: Deploy to development
