@@ -28,3 +28,11 @@ jobs:
           context: .
           push: true
           tags: tanawatchans/web-app:development-${{ steps.commit_hash.outputs.sha_short }}
+      
+      - uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: tanawatChans
+
+      - name: Deploy to production
+        run: echo deploying
