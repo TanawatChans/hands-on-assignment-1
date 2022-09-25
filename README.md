@@ -34,7 +34,7 @@ However, as I have not set up a GKE cluster, the workflows are expected to fail.
 - When finish `feature-branch`, merge locally to `development`
 - Push `development`, the workflow will trigger and deploy to development environment
 
-### Deploy to development staging
+### Deploy to staging and production
 
 ![image](https://user-images.githubusercontent.com/53340736/192113423-158d30e0-573b-41c4-bc0f-516f3b47f8f7.png)
 
